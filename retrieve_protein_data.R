@@ -7,18 +7,9 @@
 ## Interactions
 ## GO Functions
 ## GO Cellular location
-
 # to be merged into parent_DF by cbind() or returned as is
 
-# TO DO: 
-## Add library checks
-## Add optional vector output instead of df
-
-# Add checks for libraries: 
-# UniProt.ws
-# dplyr
-# data.table
-# glue (possibly not necessary)
+# TODO: parse acc_vector so both "" input and input without "" is accepted
 
 library(UniProt.ws)
 library(dplyr)
