@@ -9,7 +9,7 @@
 ## GO Cellular location
 # to be merged into parent_DF by cbind() or returned as is
 
-# TODO: parse acc_vector so both "" input and input without "" is accepted
+# TODO: parse acc_vector so both "" input and input without quotes is accepted
 
 library(UniProt.ws)
 library(dplyr)
