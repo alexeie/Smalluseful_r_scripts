@@ -37,8 +37,9 @@ request_choices <- list(
   funct = "FUNCTION"
 )
 
-# If accessions are in df, ref df as follows:  acc_vector = "uniprot_acc", original = new_source
-# If accessions is in vector, ref vector as follows: new_source$uniprot_acc
+# If accessions are in df, ref the column of accessions as follows:  
+#                 acc_vector = "uniprot_acc", original = new_source
+# If accessions is in vector, ref vector with quotations
 
 
 retrieve_UP <- function(original = NULL,
