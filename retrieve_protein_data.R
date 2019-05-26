@@ -21,15 +21,14 @@
 # glue (possibly not necessary)
 
 library(UniProt.ws)
-#library(dplyr)
-#library(data.table)
+library(dplyr)
+library(magrittr)
 
-request_choices <- list(
+request_alternatives <- list(
   shortname = "ENTRY-NAME",           #Fungerer! Kortnavn. Må parses og fjerne trailing "_HUMAN" (Benytt gsub)
   longname = "PROTEIN-NAMES",         #Fungerer! Må parses: Klammer [ ] og innhold må fjernes, Ord farentes til separat kolonne "Full_name" og ord inne i parentes til separat kolonne "short_name"
   genecards = "GENECARDS",            #Kortnavn
   genename = "GENES",
-
   id = "ID",                          #OK, Uniprot accession
   interactor = "INTERACTOR",          #Interessant! Fungerer fint, med semikolon-separert resultat i celle "interactor"
   go = c("GO", "GO-ID"),              #kun GO:ID accession, GO fungerer godt. Skal det benyttes må kolonnene parses videre
@@ -55,17 +54,15 @@ retrieve_UP <- function(original = NULL,
   # Check for input errors:
   if (is.null(acc_vector)){
     stop("Error: Please supply input data in acc_vector-argument")
-  } else if (kt != "UNIPROTKB"){
-    stop("Error: Only 'UNIPROT' Accession input supported (yet)")
-  
+
   # If dataframe is supplied and append is wanted
   } else if (is.data.frame(original) == TRUE && append == TRUE) {
     UniProt.ws::select(UP_data,
-                       kt = "UNIPROTKB",
+                       kt = kt,
                        columns = request,
                        keys = eval(original[[acc_vector]])
                        ) %>% 
-      select(-"UNIPROTKB") %>% 
+      dplyr::select(-"UNIPROTKB") %>% 
       {cbind(original, .)} %>% 
       return(.)
     
@@ -73,7 +70,7 @@ retrieve_UP <- function(original = NULL,
     #     Use vector input, return simple df with results
   } else {
     UniProt.ws::select(UP_data,
-                       kt = "UNIPROTKB",
+                       kt = kt,
                        columns = request,
                        # If dataframe is supplied, ue df$column format
                        if(is.data.frame(original) == TRUE) {keys = original[[acc_vector]]
