@@ -20,7 +20,7 @@
 # data.table
 # glue (possibly not necessary)
 
-#library(UniProt.ws)
+library(UniProt.ws)
 #library(dplyr)
 #library(data.table)
 
