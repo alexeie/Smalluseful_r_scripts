@@ -84,19 +84,3 @@ retrieve_UP <- function(original = NULL,
     
   }
 }
-
-
-
-# Testing:
-# df <-     data.frame(uniprot_acc = c("P01189", "O15240", "P28222"), "hello")
-# vector <- as.character(df$uniprot_acc)
-# request <- c("ENTRY-NAME", "PROTEIN-NAMES")
-# 
-# View(
-#   retrieve_UP(acc_vector = "uniprot_acc", original = df, append = TRUE, request = request))
-# 
-# View(
-#   retrieve_UP(acc_vector = "uniprot_acc", original = df, append = FALSE, request = request))
-# 
-# retrieve_UP()
-# retrieve_UP(acc_vector = vector)
