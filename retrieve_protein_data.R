@@ -35,7 +35,7 @@ request_alternatives <- list(
 retrieve_UP <- function(original = NULL,
                         acc_vector = NULL, 
                         append = FALSE,
-                        request = "ENTRY-NAME",
+                        request = "ENTRY-NAME", 
                         kt = "UNIPROTKB") {
   
   if(exists("UP_data") == FALSE) {
