@@ -20,9 +20,9 @@
 # data.table
 # glue (possibly not necessary)
 
-library(UniProt.ws)
-library(dplyr)
-library(data.table)
+#library(UniProt.ws)
+#library(dplyr)
+#library(data.table)
 
 request_choices <- list(
   shortname = "ENTRY-NAME",           #Fungerer! Kortnavn. Må parses og fjerne trailing "_HUMAN" (Benytt gsub)
