@@ -1,140 +1,100 @@
-# Script for returning DF of Accessions / Short protein names / Full protein names / Gene names / Interactions
-# to be merged into parent_DF by cbind()
+# Script for simplifying the use of UniProt.ws to retrieve protein data
+
+## Accessions 
+## Short protein names 
+## Full protein names 
+## Gene names 
+## Interactions
+## GO Functions
+## GO Cellular location
+
+# to be merged into parent_DF by cbind() or returned as is
+
+# TO DO: 
+## Add library checks
+## Add optional vector output instead of df
 
 # Add checks for libraries: 
 # UniProt.ws
 # dplyr
 # data.table
-# glue
+# glue (possibly not necessary)
 
 library(UniProt.ws)
 library(dplyr)
 library(data.table)
 
-### uniprot.ws:
+request_choices <- list(
+  shortname = "ENTRY-NAME",           #Fungerer! Kortnavn. MÃ¥ parses og fjerne trailing "_HUMAN" (Benytt gsub)
+  longname = "PROTEIN-NAMES",         #Fungerer! MÃ¥ parses: Klammer [ ] og innhold mÃ¥ fjernes, Ord farentes til separat kolonne "Full_name" og ord inne i parentes til separat kolonne "short_name"
+  genecards = "GENECARDS",            #Kortnavn
+  genename = "GENES",
 
-# columns,keytypes,keys and select.
-
-col_shortname <- "ENTRY-NAME"           #Fungerer! Kortnavn. Må parses ved å fjerne trailing "_HUMAN" (Benytt gsub)
-col_longname <- "PROTEIN-NAMES"         #Fungerer! Må parses: Klammer [ ] og innhold må fjernes, Ord før parentes til separat kolonne "Full_name" og ord inne i parentes til separat kolonne "short_name"
-col_genecards <- "GENECARDS"            #Kortnavn
-col_genes <- "GENES"
-
-col_go <-   "GO", "GO-ID"               #kun GO:ID accession, GO fungerer godt. Skal det benyttes må kolonnene parses videre
-col_id <-   "ID"                        #OK, Uniprot accession
-col_interactor <- "INTERACTOR"          #Interessant! Fungerer fint, med semikolon-separert resultat i celle "interactor"
-col_loc <- "SUBCELLULAR-LOCATIONS"      # Fungerer bra!
-col_funct <-"FUNCTION"                  # Fungerer bra!
-
-if(exists("UP_obj") == FALSE) UP_obj <- UniProt.ws::UniProt.ws(taxId=9606)
-
-
-
-
-
-
-
-
+  id = "ID",                          #OK, Uniprot accession
+  interactor = "INTERACTOR",          #Interessant! Fungerer fint, med semikolon-separert resultat i celle "interactor"
+  go = c("GO", "GO-ID"),              #kun GO:ID accession, GO fungerer godt. Skal det benyttes mÃ¥ kolonnene parses videre
+  loc = "SUBCELLULAR-LOCATIONS",
+  funct = "FUNCTION"
+)
 
 # If accessions are in df, ref df as follows:  acc_vector = "uniprot_acc", original = new_source
 # If accessions is in vector, ref vector as follows: new_source$uniprot_acc
 
 
-
-
-retrieve_UP <- function(original = NULL, 
-                        append = FALSE,
+retrieve_UP <- function(original = NULL,
                         acc_vector = NULL, 
-                        request = col_shortname,
-                        kt = "UNIPROTKB"
-                        ) {
+                        append = FALSE,
+                        request = "ENTRY-NAME",
+                        kt = "UNIPROTKB") {
+  
+  if(exists("UP_data") == FALSE) {
+    UP_data <- UniProt.ws::UniProt.ws(taxId=9606)  # Download Uniprot data if no local copy
+  }
+  
+  # Check for input errors:
+  if (is.null(acc_vector)){
+    stop("Error: Please supply input data in acc_vector-argument")
+  } else if (kt != "UNIPROTKB"){
+    stop("Error: Only 'UNIPROT' Accession input supported (yet)")
+  
+  # If dataframe is supplied and append is wanted
+  } else if (is.data.frame(original) == TRUE && append == TRUE) {
+    UniProt.ws::select(UP_data,
+                       kt = "UNIPROTKB",
+                       columns = request,
+                       keys = eval(original[[acc_vector]])
+                       ) %>% 
+      select(-"UNIPROTKB") %>% 
+      {cbind(original, .)} %>% 
+      return(.)
     
-    #if(acc_vector == NULL) stop("Error: Please supply input data in acc_vector - argument")
-    #if(kt != "UNIPROTKB") stop("Error: Only UNIPROT Accession input supported yet")
+    # If dataframe is not supplied: Use vector input, return simple df with results
+  } else {
+    UniProt.ws::select(UP_data,
+                       kt = "UNIPROTKB",
+                       columns = request,
+                       # If dataframe is supplied, ue df$column format
+                       if(is.data.frame(original) == TRUE) {keys = original[[acc_vector]]
+                       # If vector is supplied sans df, specify only the vector
+                       } else {keys = acc_vector}  
+                       ) %>% 
+    {ifelse(is.data.frame(original) == TRUE, return(.), return(.[[2]]))}
     
-    if(is.null(original) == FALSE && append == TRUE) {           # If dataframe is supplied and append is wanted
-        UniProt.ws::select(UP_obj, 
-                            keys = eval(original[[acc_vector]]), 
-                            columns = request, 
-                            kt = "UNIPROTKB") %>% 
-            select(-"UNIPROTKB") %>% 
-            {cbind(original, .)} %>% 
-            return(.)
-        
-    } 
-      else                                              # Easier function to not append data
-          UniProt.ws::select(UP_obj, 
-                             if(is.null(original) == FALSE) {keys = original[[acc_vector]]}
-                             else {keys = acc_vector}  # This variable differs if dataframe is supplied or not
-                             ,columns = request, 
-                             kt = "UNIPROTKB") %>% 
-            return(.)
+  }
 }
 
 
 
-# df <-       retrieve_UP(acc_vector = "uniprot_acc", original = new_source)
-# vector <-   retrieve_UP(acc_vector = acc)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#  res <- UniProt.ws::select(UP_obj, 
-#                           keys = acc_vector, 
-#                           columns = request, 
-#                           kt = "UNIPROTKB")  
+# Testing:
+# df <-     data.frame(uniprot_acc = c("P01189", "O15240", "P28222"), "hello")
+# vector <- as.character(df$uniprot_acc)
+# request <- c("ENTRY-NAME", "PROTEIN-NAMES")
 # 
-#     
-#     
-#     
-# res2 <- retrieve_UPdata(DF$uniprot_acc[1:5], c(col_shortname,col_genes,col_funct))
+# View(
+#   retrieve_UP(acc_vector = "uniprot_acc", original = df, append = TRUE, request = request))
 # 
+# View(
+#   retrieve_UP(acc_vector = "uniprot_acc", original = df, append = FALSE, request = request))
 # 
-# # kt <- "UNIPROTKB"
-# keys <- c(source$uniprot_acc[1:50])
-# res <- UniProt.ws::select(UP_obj, keys, columns, kt)
-# # res[1,c(2,3)]
-# head(res,1)
-# # View(res)
-# 
-# 
-# 
-# 
-# 
-# grepl("data", glue_collapse(class(source)))
-
+# retrieve_UP()
+# retrieve_UP(acc_vector = vector)
