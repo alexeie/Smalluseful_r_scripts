@@ -69,7 +69,8 @@ retrieve_UP <- function(original = NULL,
       {cbind(original, .)} %>% 
       return(.)
     
-    # If dataframe is not supplied: Use vector input, return simple df with results
+    # If dataframe is not supplied or append is unwanted: 
+    #     Use vector input, return simple df with results
   } else {
     UniProt.ws::select(UP_data,
                        kt = "UNIPROTKB",
