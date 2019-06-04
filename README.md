@@ -3,6 +3,6 @@ and general data visualization tools.
 
 # Smalluseful_r_scripts
 
-current_path <- rstudioapi::getActiveDocumentContext()$path 
-setwd(dirname(current_path))
-rm(current_path)
+current_path <- rstudioapi::getActiveDocumentContext()$path  
+setwd(dirname(current_path))  
+rm(current_path)  
