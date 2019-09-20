@@ -1,6 +1,14 @@
 #Project: PROJECT_TITLE
 #Date: PROJECT_STARTUP_DATE
 
-source("C:/Users/aleeie/Documents/R-projects/src/setWdThisDir.R")
+# This function sets working directory to the directory 
+# where the script executing the file is located
+setWdThisDir = function () {
+    current_path <- rstudioapi::getActiveDocumentContext()$path
+    setwd(dirname(current_path))
+    rm(current_path)
+}
 setWdThisDir()
-rm(setWdThisDir) # Remove  function after execution
+
+# Remove  function after execution
+rm(setWdThisDir) 
