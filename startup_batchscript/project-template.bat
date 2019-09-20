@@ -2,17 +2,17 @@
 
 cls
 mode con: Cols=75 Lines=15
-Title Prosjekt-initiering
+Title Project-initiation
 
 SET YEAR=%date:~-4,10%
 SET MD=%date:~3,2%
 
-@echo Project template script by Alexander K Eieland date 20.Sept.2019
+@echo Project template script by Alexander K Eieland (NO) date 20.Sept.2019
 @echo.
 @echo The Year is %YEAR%, Month %MD%
 
-set /p requestee="Enter Name: "
-set /p project="Enter Project Name: "
+set /p requestee="Enter requestee Name: "
+set /p project="Enter project Name: "
 
 MkDir "%requestee%_%YEAR%\%MD%_%project%"
 
@@ -39,6 +39,6 @@ rename "project_template.Rmd" "%project%.Rmd"
 rename "project_template.R" "%project%.R"
 
 @echo ----------------------------------------------------------------------------------
-@echo New project folder located at: C:\Users\aleeie\Documents\R-projects\%requestee%_%YEAR%\%MD%_%project%\
+@echo New project folder located at: ... %requestee%_%YEAR%\%MD%_%project%\
 
 TIMEOUT 10
