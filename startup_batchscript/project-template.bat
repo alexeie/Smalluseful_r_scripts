@@ -4,8 +4,10 @@ cls
 mode con: Cols=75 Lines=15
 Title Project-initiation
 
-SET YEAR=%date:~-4,10%
-SET MD=%date:~3,2%
+for /f "tokens=2 delims==" %%G in ('wmic os get localdatetime /value') do set datetime=%%G
+
+set YEAR=%datetime:~0,4%
+set MD=%datetime:~4,2%
 
 @echo Project template script by Alexander K Eieland (NO) date 20.Sept.2019
 @echo.
