@@ -10,6 +10,7 @@ set YEAR=%datetime:~0,4%
 set MD=%datetime:~4,2%
 
 @echo Project template script by Alexander K Eieland (NO) date 20.Sept.2019
+@echo Date / Locale dependent on date format dd/MM/yyy
 @echo.
 @echo The Year is %YEAR%, Month %MD%
 
